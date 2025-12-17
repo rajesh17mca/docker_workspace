@@ -154,6 +154,88 @@ Dockerfile reference
 * ONBUILD - Specify instructions for when the image is used in a build.
 * SHELL - Set the default shell of an image.
 ```
+- ADD – Copies files, directories, or remote URLs into the image and can auto-extract archives.
+- ARG – Defines a build-time variable that can be passed during docker build.
+- CMD – Sets default arguments for the container; can be overridden at runtime.
+- COPY – Copies files or directories from the build context into the image.
+- ENTRYPOINT – Defines the executable that will always run when the container starts.
+- ENV – Sets environment variables available at runtime inside the container.
+- EXPOSE – Documents which ports the container listens on (does not publish them).
+- FROM – Specifies the base image to build upon.
+- HEALTHCHECK – Defines a command to check container health during runtime.
+- RUN – Executes commands during image build and creates a new layer.
+- USER – Specifies the user and optionally group to run the container or commands as.
+- VOLUME – Creates a mount point for persistent or shared data.
+- WORKDIR – Sets the working directory for subsequent instructions.
+- LABEL – Adds metadata in key-value format to the image.
+- MAINTAINER – Declares the author/maintainer of the image (deprecated in favor of LABEL).
+- STOPSIGNAL – Sets the system signal used to stop the container gracefully.
+- ONBUILD – Sets instructions that run when the image is used as a base for another image.
+- SHELL – Overrides the default shell used to execute commands like RUN.
+
+Example which covers all instructions 
+```
+# FROM: Base image
+FROM ubuntu:22.04
+
+# MAINTAINER: Image author (deprecated, use LABEL instead)
+MAINTAINER Rajesh <rajesh@example.com>
+
+# LABEL: Metadata for image
+LABEL app="demo-app" \
+      version="1.0" \
+      description="Demo Dockerfile covering all instructions"
+
+# ARG: Build-time variable
+ARG APP_VERSION=1.0.0
+
+# ENV: Runtime environment variable
+ENV APP_HOME=/opt/app \
+    APP_VERSION=${APP_VERSION}
+
+# WORKDIR: Set working directory
+WORKDIR ${APP_HOME}
+
+# SHELL: Override default shell
+SHELL ["/bin/bash", "-c"]
+
+# RUN: Install dependencies
+RUN apt-get update && \
+    apt-get install -y curl python3 && \
+    rm -rf /var/lib/apt/lists/*
+
+# COPY: Copy files from build context
+COPY app.py ${APP_HOME}/app.py
+
+# ADD: Add files or remote URLs
+ADD https://example.com/sample.txt /tmp/sample.txt
+
+# USER: Create and switch to non-root user
+RUN useradd -m appuser
+USER appuser
+
+# EXPOSE: Document port
+EXPOSE 8080
+
+# VOLUME: Persistent data directory
+VOLUME ["/opt/app/data"]
+
+# HEALTHCHECK: Monitor container health
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# ENTRYPOINT: Fixed executable
+ENTRYPOINT ["python3"]
+
+# CMD: Default argument for ENTRYPOINT
+CMD ["app.py"]
+
+# STOPSIGNAL: Signal for graceful shutdown
+STOPSIGNAL SIGTERM
+
+# ONBUILD: Triggered when used as a base image
+ONBUILD COPY child-config.yaml /opt/app/
+```
 
 ### Steps to Create an Image from a Running Container
 Identify the Container: First, you need the name or ID of the running container you want to commit. You can list all running containers using the docker ps command.
