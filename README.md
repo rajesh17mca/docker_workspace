@@ -717,3 +717,18 @@ services:
 * Docker Compose is a tool used to define and run multi-container Docker applications, using a YAML file to configure the application's services and networking.
 * A Docker Service is a running container in a Docker Swarm cluster, which allows for scaling the application across multiple machines with features like replication and load balancing
 * A Docker Stack is a group of interrelated services that together form an entire application or microservice system deployed collectively to a Swarm cluster.
+--------
+#### Do we need to execute the swarm commands in manager mode only?
+Yes, key swarm management commands like docker swarm init, join, and service management (create, update, scale, remove) must be run on a manager node, as they interact with the swarm's distributed state; however, worker nodes run containers (tasks) and handle the actual application load, while you can run some Docker commands on managers, it's best practice to keep manager workloads light and use constraints to run most services only on workers for stability and security. 
+--------
+#### Without swarm can we create docker secret
+No, you cannot create a Docker secret using the native docker secret create command without Docker Swarm mode enabled. Docker secrets are a core feature of Docker Swarm, designed for secure, encrypted management and distribution of sensitive data across a cluster. 
+--------
+#### What effect does the routing mesh have on a docker swarm cluster
+The routing mesh in a Docker Swarm cluster provides built-in, transparent load balancing and high availability for services by enabling every node to accept traffic on a published port for any service task running in the cluster. It simplifies application access and scaling. 
+--------
+#### Docker swarm ingress load balancing
+Docker Swarm provides built-in ingress load balancing via its routing mesh and internal DNS service discovery. This system automatically distributes incoming traffic across all healthy replicas of a service, regardless of which node receives the request. 
+--------
+#### What is the docker swarm database 
+Raft
